@@ -1,0 +1,7 @@
+/* ── ANIMATIONS ── */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.batch-card{animation:slideIn .2s ease both}
+.stage-form{animation:fadeIn .25s ease both}
+.tl-card{animation:fadeIn .2s ease both}
+.comp-stage{animation:fadeIn .2s ease both}

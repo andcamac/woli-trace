@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woli Trace — Trazabilidad Semilla a Producto</title>
+<meta name="description" content="Sistema de trazabilidad para cannabis medicinal y cáñamo. Woli CBD Costa Rica.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/forms.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+<!-- ── TOP BAR ── -->
+<header id="topbar">
+  <div class="topbar-left">
+    <button class="tbtn tbtn-menu" id="sidebar-toggle" onclick="App.toggleSidebar()" aria-label="Menú">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="logo">WOLI <span>TRACE</span></div>
+    <div class="logo-sub">Trazabilidad Semilla → Producto</div>
+  </div>
+  <div class="topbar-right">
+    <button class="tbtn tbtn-new" onclick="App.openNewBatch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo Lote
+    </button>
+    <button class="tbtn tbtn-export" onclick="App.exportReport()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar
+    </button>
+    <button class="tbtn tbtn-scan" onclick="App.openScanner()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="4" height="4"/></svg>
+      Escanear QR
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN LAYOUT ── -->
+<div id="app">
+
+  <!-- SIDEBAR: Batch list -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <span>Lotes Activos</span>
+      <div class="batch-count" id="batch-count">0</div>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="search-input" placeholder="Buscar lote, cepa, variedad..." oninput="App.search(this.value)">
+    </div>
+    <div class="sidebar-filters">
+      <button class="filter-btn active" onclick="App.filter('all',this)">Todos</button>
+      <button class="filter-btn" onclick="App.filter('active',this)">Activos</button>
+      <button class="filter-btn" onclick="App.filter('complete',this)">Completos</button>
+      <button class="filter-btn" onclick="App.filter('flag',this)">⚠ Alertas</button>
+    </div>
+    <div id="batch-list">
+      <!-- Batch cards injected by JS -->
+    </div>
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <main id="main-panel">
+
+    <!-- Empty state -->
+    <div id="empty-state">
+      <div class="empty-icon">🌱</div>
+      <div class="empty-title">Sin lotes seleccionados</div>
+      <div class="empty-sub">Selecciona un lote del panel izquierdo o crea uno nuevo para comenzar el registro de trazabilidad.</div>
+      <button class="empty-cta" onclick="App.openNewBatch()">+ Crear Primer Lote</button>
+    </div>
+
+    <!-- Batch detail (shown when a batch is selected) -->
+    <div id="batch-detail" class="hidden">
+
+      <!-- Batch header -->
+      <div id="detail-header">
+        <div class="detail-header-left">
+          <div class="detail-id" id="detail-id"></div>
+          <div class="detail-name" id="detail-name"></div>
+          <div class="detail-meta" id="detail-meta"></div>
+        </div>
+        <div class="detail-header-right">
+          <div class="status-chip" id="detail-status"></div>
+          <div id="detail-qr"></div>
+          <div id="detail-delete-wrap"></div>
+        </div>
+      </div>
+
+      <!-- Stage pipeline -->
+      <div id="stage-pipeline">
+        <div class="pipeline-label">Etapas del Ciclo</div>
+        <div class="pipeline-track" id="pipeline-track">
+          <!-- Stage nodes injected by JS -->
+        </div>
+      </div>
+
+      <!-- Active stage form -->
+      <div id="stage-form-wrap"></div>
+
+      <!-- Event timeline -->
+      <div id="timeline-wrap">
+        <div class="timeline-header">
+          <span class="section-title">📋 Registro de Trazabilidad</span>
+          <button class="timeline-export-btn" onclick="App.exportBatchPDF()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exportar PDF
+          </button>
+        </div>
+        <div id="event-timeline">
+          <!-- Events injected by JS -->
+        </div>
+      </div>
+
+      <!-- Compliance panel -->
+      <div id="compliance-wrap">
+        <div class="section-title">✅ Panel de Cumplimiento Regulatorio</div>
+        <div id="compliance-grid"></div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ── SIDEBAR OVERLAY (mobile) ── -->
+<div id="sidebar-overlay" onclick="App.closeSidebar()"></div>
+
+<!-- ── NEW BATCH MODAL ── -->
+<div id="modal-overlay" class="modal-hidden" onclick="App.closeModal(event)">
+  <div id="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">Nuevo Lote</span>
+      <button class="modal-close" onclick="App.closeModalBtn()">×</button>
+    </div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- ── QR MODAL ── -->
+<div id="qr-modal-overlay" class="modal-hidden" onclick="App.closeQRModal(event)">
+  <div id="qr-modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Código QR del Lote</span>
+      <button class="modal-close" onclick="App.closeQRModalBtn()">×</button>
+    </div>
+    <div id="qr-modal-body"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"></div>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<!-- App scripts -->
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/stages.js"></script>
+<script src="js/batch.js"></script>
+<script src="js/timeline.js"></script>
+<script src="js/compliance.js"></script>
+<script src="js/qr.js"></script>
+<script src="js/export.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
